@@ -4,51 +4,42 @@
   <body>
     <todo-app></todo-app>
 
-
     <script type="module">
-      import { LitElement, html, css } from 'https://unpkg.com/lit-element?module';
+    import {html, component, useState} from 'https://unpkg.com/haunted/haunted.js'
 
-        class TodoApp extends LitElement {
-
-     static get properties() {
-          return {
-            todos: { type: Array },
-          };
+       const todoApp = ()=>{
+        const [todos, setTodos] =useState([{text: ' First'}]);
+        const _addTodo = (e)=>{
+        const input = e.currentTarget.previousElementSibling;
+        const text= input.value;
+        input.value='';
+        setTodos(old=>[...old ,{text}])       
         }
 
-            constructor(){
-                super();
-                this.todos = [];
-            }
+        return  html`
+        <h1>Todo app</h1>
 
-            render() {
-  return html`
-    <h1>Todo app</h1>
+        <input placeholder='New Todo' />
+        <button @click=${_addTodo}>Add Todo</button>
 
-<input id='addTodoInput' placeholder='New Todo' />
-<button @click=${this._addTodo}>Add Todo</button>
-
-
-    <ol>
-      ${this.todos.map(
+      <ol>
+      ${todos.map(
         todo => html`
-          <li>${todo.text}</li>
+          <li>${todo.text}
+
+                <button
+                        @click=${() =>
+                        setTodos([...todos.filter(x => x !== todo)])}>
+                        X
+                </button>
+          </li>
         `,
       )}
     </ol>
-  `;
-}
-_addTodo() {
-  const input = this.shadowRoot.getElementById('addTodoInput');
-  const text= input.value;
-  input.value='';
+    `       
+    } 
 
-this.todos = [ ...this.todos ,{text}];
-}
-
-}
-
-      customElements.define('todo-app', TodoApp);
+      customElements.define('todo-app', component(todoApp));
     </script>
   </body>
 
